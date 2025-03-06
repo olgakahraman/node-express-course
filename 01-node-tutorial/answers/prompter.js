@@ -1,64 +1,39 @@
-const http = require("http");
-var StringDecoder = require("string_decoder").StringDecoder;
+const http = require('http');
 
-const getBody = (req, callback) => {
-  const decode = new StringDecoder("utf-8");
-  let body = "";
-  req.on("data", function (data) {
-    body += decode.write(data);
-  });
-  req.on("end", function () {
-    body += decode.end();
-    const body1 = decodeURI(body);
-    const bodyArray = body1.split("&");
-    const resultHash = {};
-    bodyArray.forEach((part) => {
-      const partArray = part.split("=");
-      resultHash[partArray[0]] = partArray[1];
-    });
-    callback(resultHash);
-  });
-};
-
-// here, you could declare one or more variables to store what comes back from the form.
-let item = "Enter something below.";
-
-// here, you can change the form below to modify the input fields and what is displayed.
-// This is just ordinary html with string interpolation.
-const form = () => {
-  return `
-  <body>
-  <p>${item}</p>
-  <form method="POST">
-  <input name="item"></input>
-  <button type="submit">Submit</button>
-  </form>
-  </body>
-  `;
-};
+const randomNumber = Math.floor(Math.random() * 100) + 1;
+let message = 'Guess a number between 1 and 100';
 
 const server = http.createServer((req, res) => {
-  console.log("req.method is ", req.method);
-  console.log("req.url is ", req.url);
-  if (req.method === "POST") {
-    getBody(req, (body) => {
-      console.log("The body of the post is ", body);
-      // here, you can add your own logic
-      if (body["item"]) {
-        item = body["item"];
-      } else {
-        item = "Nothing was entered.";
-      }
-      // Your code changes would end here
-      res.writeHead(303, {
-        Location: "/",
-      });
-      res.end();
-    });
-  } else {
-    res.end(form());
-  }
+	if (req.method === 'POST') {
+		let body = '';
+		req.on('data', (chunk) => {
+			body += chunk.toString();
+		});
+		req.on('end', () => {
+			const guess = new URLSearchParams(body).get('number');
+			if (guess == randomNumber) {
+				message = `Congratulations! You guessed the number ${randomNumber}`;
+			} else if (guess < randomNumber) {
+				message = 'The number is higher!';
+			} else {
+				message = 'The number is lower!';
+			}
+			res.writeHead(303, { Location: '/' });
+			res.end();
+		});
+	} else {
+		res.writeHead(200, { 'Content-Type': 'text/html' });
+		res.end(`
+      <h1>Game: Guess the Number</h1>
+      <p>${message}</p>
+      <form method="POST">
+        <input type="number" name="number" min="1" max="100" required>
+        <button type="submit">Submit</button>
+      </form>
+    `);
+	}
 });
 
-server.listen(3000);
-console.log("The server is listening on port 3000.");
+server.listen(3000, () => {
+	console.log('Server is running on port 3000');
+});
