@@ -1,0 +1,30 @@
+{
+  "name": "express-course",
+  "version": "1.0.0",
+  "description": "learning node",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon prompter.js",
+    "start": "node prompter.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/olgakahraman/node-express-coutse.git"
+  },
+  "keywords": [
+    "\"nodejs\""
+  ],
+  "author": "Olga Dietiuk Kahraman",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/olgakahraman/node-express-coutse/issues"
+  },
+  "homepage": "https://github.com/olgakahraman/node-express-coutse#readme",
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
